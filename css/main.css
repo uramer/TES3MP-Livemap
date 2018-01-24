@@ -1,0 +1,21 @@
+* {
+  padding: 0;
+  margin: 0;
+}
+canvas {
+  position: absolute;
+  z-index: 0;
+}
+
+.loadStatus {
+  position: absolute;
+  width: 100px;
+  height: 15px;
+  font: 11px Arial;
+  color: white;
+  bottom: 30px;
+  right: 120px;
+  text-align: left;
+  z-index: 1;
+  
+}
