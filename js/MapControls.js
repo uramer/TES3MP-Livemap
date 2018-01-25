@@ -87,13 +87,12 @@ MapControls.prototype = {
     
     for(var z = this.zoomHandler.MAX_ZOOM;z>=this.zoomHandler.MIN_ZOOM;z--) {
       var c = this.zoomHandler.getTileCount(z)
-      var center = c / 2
+      var center = Math.pow(2,z-12)//c / 2
       var k = this.zoomHandler.getZoomRatio(z0,z)
       var resolution = k * this.tileLoader.TILE_RESOLUTION
       
-      var cx = this.app.view.width  / 2 + this.offset.x - ( c / 2 ) * resolution
-      var cy = this.app.view.height / 2 + this.offset.y - ( c / 2 ) * resolution
-
+      var cx = this.app.view.width  / 2 + this.offset.x - ( center ) * resolution
+      var cy = this.app.view.height / 2 + this.offset.y - ( center ) * resolution
       //console.log(cx,cy,this.app.view.width / 2,this.app.view.height / 2)
 
       for(var x = 0;x<c;x++) {

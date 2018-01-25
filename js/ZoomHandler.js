@@ -27,14 +27,14 @@ ZoomHandler.prototype = {
     return this.getTileCount(z0)/this.getTileCount(z)// Math.pow(2,z0 - z)
   },
   checkBoundaries : function (map,z0,z,x,y) {
-    var size = this.getTileCount(z)
+    var center = this.getTileCount(z) / 2
     var k = this.getZoomRatio(z0,z)
     var res = map.tileLoader.TILE_RESOLUTION * k
-    var x0 = Math.floor( size / 2 - ( map.app.view.width  / 2 + map.offset.x ) / res ) - 1
-    var y0 = Math.floor( size / 2 - ( map.app.view.height / 2 + map.offset.y ) / res ) - 1
+    var x0 = Math.floor( center - ( map.offset.x + map.app.view.width  / 2 ) / res ) - 1
+    var y0 = Math.floor( center - ( map.offset.y + map.app.view.height / 2 ) / res ) - 1
     
-    var x1 = x0 + Math.ceil( map.app.view.width  / res ) + 1
-    var y1 = y0 + Math.ceil( map.app.view.height / res ) + 1
+    var x1 = Math.ceil( center - ( map.offset.x - map.app.view.height / 2  ) / res ) + 1
+    var y1 = Math.ceil( center - ( map.offset.y - map.app.view.height / 2  ) / res ) + 1
 
     /*console.log(
       "zoom: "+z0+" from ("+x0+", "+y0+") to ("+x1+", "+y1+") "+
@@ -46,20 +46,26 @@ ZoomHandler.prototype = {
 
     return (x0<=x && x<=x1 && y0<=y && y<=y1)
   },
-  updateOffset : function (z) {
+  updateOffset : function (e,z) {
+    var k = 1
+    if (z > this.getZoom()) k = -1
+    if(z == this.getZoom()) k = 0
+    this.map.offset.x = this.map.offset.x - k * ( e.clientX - this.map.app.view.width / 2 )
+    this.map.offset.y = this.map.offset.y - k * ( e.clientY - this.map.app.view.height / 2 )
+
     this.map.offset.x *= this.map.zoomHandler.getZoomRatio(this.map.zoomHandler.getZoom(),z)
     this.map.offset.y *= this.map.zoomHandler.getZoomRatio(this.map.zoomHandler.getZoom(),z)
   },
-  decrease : function() {
+  decrease : function(e) {
     var z = this.currentZoom
     this.currentZoom--
     if(this.currentZoom<this.MIN_ZOOM) this.currentZoom = this.MIN_ZOOM
-    this.updateOffset(z)
+    this.updateOffset(e,z)
   },
-  increase : function() {
+  increase : function(e) {
     var z = this.currentZoom
     this.currentZoom++
     if(this.currentZoom>this.MAX_ZOOM) this.currentZoom = this.MAX_ZOOM
-    this.updateOffset(z)
+    this.updateOffset(e,z)
   }
 }

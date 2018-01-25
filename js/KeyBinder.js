@@ -19,9 +19,9 @@ KeyBinder.prototype = {
   },
   wheelZoomHandler : function (e) {
     if(e.wheelDelta>0)
-      this.map.zoomHandler.increase()
+      this.map.zoomHandler.increase(e)
     else
-      this.map.zoomHandler.decrease()
+      this.map.zoomHandler.decrease(e)
 
     this.map.render()
   },
