@@ -22,6 +22,7 @@ KeyBinder.prototype = {
       this.map.zoomHandler.increase()
     else
       this.map.zoomHandler.decrease()
+
     this.map.render()
   },
   mouseDownDragHandler : function (e) {

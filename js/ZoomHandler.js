@@ -1,17 +1,18 @@
-var ZoomHandler = function(x,y) {
-    this.ZOOM_TABLE  = {
-      11: 1,
-      12: 2,
-      13: 4,
-      14: 7,
-      15: 13,
-      16: 25,
-      17: 50,
-      18: 100
-    }
-    this.MIN_ZOOM = 11
-    this.MAX_ZOOM = 18
-    this.currentZoom = 11
+var ZoomHandler = function(map) {
+  this.map = map
+  this.ZOOM_TABLE  = {
+    11: 1,
+    12: 2,
+    13: 4,
+    14: 7,
+    15: 13,
+    16: 25,
+    17: 50,
+    18: 100
+  }
+  this.MIN_ZOOM = 11
+  this.MAX_ZOOM = 18
+  this.currentZoom = 12
 }
 
 ZoomHandler.prototype = {
@@ -23,11 +24,11 @@ ZoomHandler.prototype = {
     return this.ZOOM_TABLE[z]
   },
   getZoomRatio : function(z0,z) {
-    return this.getTileCount(z0)/this.getTileCount(z)
+    return this.getTileCount(z0)/this.getTileCount(z)// Math.pow(2,z0 - z)
   },
   checkBoundaries : function (map,z0,z,x,y) {
     var size = this.getTileCount(z)
-    var k = this.getZoomRatio(z0,z)//Math.pow(2,z0 - z)
+    var k = this.getZoomRatio(z0,z)
     var res = map.tileLoader.TILE_RESOLUTION * k
     var x0 = Math.floor( size / 2 - ( map.app.view.width  / 2 + map.offset.x ) / res ) - 1
     var y0 = Math.floor( size / 2 - ( map.app.view.height / 2 + map.offset.y ) / res ) - 1
@@ -45,12 +46,20 @@ ZoomHandler.prototype = {
 
     return (x0<=x && x<=x1 && y0<=y && y<=y1)
   },
+  updateOffset : function (z) {
+    this.map.offset.x *= this.map.zoomHandler.getZoomRatio(this.map.zoomHandler.getZoom(),z)
+    this.map.offset.y *= this.map.zoomHandler.getZoomRatio(this.map.zoomHandler.getZoom(),z)
+  },
   decrease : function() {
+    var z = this.currentZoom
     this.currentZoom--
     if(this.currentZoom<this.MIN_ZOOM) this.currentZoom = this.MIN_ZOOM
+    this.updateOffset(z)
   },
   increase : function() {
+    var z = this.currentZoom
     this.currentZoom++
     if(this.currentZoom>this.MAX_ZOOM) this.currentZoom = this.MAX_ZOOM
+    this.updateOffset(z)
   }
 }

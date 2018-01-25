@@ -1,7 +1,7 @@
 var MapControls = function () {
   this.app = null
   this.containers = [] //for every zoom level
-  this.zoomHandler = new ZoomHandler()
+  this.zoomHandler = new ZoomHandler(this)
   this.tileLoader = new TileLoader(this)
   this.keyBinder = new KeyBinder(this)
   this.offset = new PIXI.Point(0,0)
@@ -42,15 +42,15 @@ MapControls.prototype = {
   },
   showContainer : function(z,x,y) {
     if(this.existsContainer(z,x,y)) {
-      //this.containers[z][x][y].visibile = true
-      this.app.stage.addChild(this.containers[z][x][y])
+      this.containers[z][x][y].visibile = true
+      //this.app.stage.addChild(this.containers[z][x][y])
       //console.log(this.containers[z][x][y].position.x+":"+this.containers[z][x][y].position.y)
     }
   },
   hideContainer : function(z,x,y) {
     if(this.existsContainer(z,x,y))
-      //this.containers[z][x][y].visibile = false
-      this.app.stage.removeChild(this.containers[z][x][y])
+      this.containers[z][x][y].visibile = false
+      //this.app.stage.removeChild(this.containers[z][x][y])
   },
   existsContainer : function(z,x,y) {
     if(this.containers[z])
@@ -77,40 +77,37 @@ MapControls.prototype = {
     t.position = new PIXI.Point(0)
     c.addChild(t)
     c.zOrder = z
-  },
-  draw : function(z,x,y,boundaries) {
-    
+    this.app.stage.addChild(c)
+    this.sortStage()
   },
   render : function() {
-    if(!this.allowRender) return false
+    if(!this.allowRender) return false //nothing loaded yet
+
     var z0 = this.zoomHandler.getZoom()
-    var size = this.zoomHandler.getTileCount(z0)
-
-    var x0 = Math.floor( size / 2 - ( this.app.view.width  / 2 + this.offset.x ) / this.tileLoader.TILE_RESOLUTION ) - 1
-    var y0 = Math.floor( size / 2 - ( this.app.view.height / 2 + this.offset.y ) / this.tileLoader.TILE_RESOLUTION ) - 1
-    
-    var x1 = Math.ceil(this.app.view.width  / this.tileLoader.TILE_RESOLUTION) + 1
-    var y1 = Math.ceil(this.app.view.height / this.tileLoader.TILE_RESOLUTION) + 1
-
-    x1+=x0
-    y1+=y0
-
     
     for(var z = this.zoomHandler.MAX_ZOOM;z>=this.zoomHandler.MIN_ZOOM;z--) {
       var c = this.zoomHandler.getTileCount(z)
+      var center = c / 2
+      var k = this.zoomHandler.getZoomRatio(z0,z)
+      var resolution = k * this.tileLoader.TILE_RESOLUTION
+      
+      var cx = this.app.view.width  / 2 + this.offset.x - ( c / 2 ) * resolution
+      var cy = this.app.view.height / 2 + this.offset.y - ( c / 2 ) * resolution
+
+      //console.log(cx,cy,this.app.view.width / 2,this.app.view.height / 2)
+
       for(var x = 0;x<c;x++) {
         for(var y = 0;y<c;y++) {
-          if(this.existsContainer(z,x,y)) {
-            var k = Math.pow(2, z0 - z) //this.zoomHandler.getZoomRatio(z0,z)//
+          if(this.existsContainer(z,x,y)) {1
             var cont = this.getContainer(z,x,y)
-            var center = (this.zoomHandler.getTileCount(z) / 2)
-            cont.width  = k * this.tileLoader.TILE_RESOLUTION
-            cont.height = k * this.tileLoader.TILE_RESOLUTION
+            
+            cont.width  = resolution
+            cont.height = resolution
+
             cont.position = new PIXI.Point(
-              this.app.view.width  / 2 + this.offset.x + (x-center) * cont.width,
-              this.app.view.height / 2 + this.offset.y + (y-center) * cont.height
+              cx + x * resolution,
+              cy + y * resolution
             )
-            console.log(z,x,y,cont.position.x,cont.position.y,cont.width)
           }
         }
       }
@@ -124,21 +121,22 @@ MapControls.prototype = {
             this.hideContainer(z,x,y)
             continue
           }
-          if(this.existsContainer(z,x,y)) {
+          if(this.existsContainer(z,x,y)) { 
             if(this.zoomHandler.checkBoundaries(this,z0,z,x,y))
               this.showContainer(z,x,y)
             else
               this.hideContainer(z,x,y)
           }
           else {
-            if(this.zoomHandler.checkBoundaries(this,z0,z,x,y))
-              this.tileLoader.load(z,x,y)
+            if(this.zoomHandler.checkBoundaries(this,z0,z,x,y)) {
+              this.tileLoader.add(z,x,y)
+            }
           }
         }
       }
     }
 
-    this.tileLoader.shiftQueue()
+    this.tileLoader.load()
 
     this.sortStage()
     this.app.renderer.render(this.app.stage)
