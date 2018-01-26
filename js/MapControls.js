@@ -15,7 +15,8 @@ MapControls.prototype = {
       width: document.body.clientWidth,
       height: document.body.clientHeight,
       antialias: true,
-      forceCanvas: false
+      forceCanvas: false,
+      clearBeforeRender: true
     })
     this.app = app
     
@@ -42,14 +43,14 @@ MapControls.prototype = {
   },
   showContainer : function(z,x,y) {
     if(this.existsContainer(z,x,y)) {
-      //this.containers[z][x][y].worldVisibile = true
+      //this.containers[z][x][y].visibile = true
       this.app.stage.addChild(this.containers[z][x][y])
       //console.log(this.containers[z][x][y].position.x+":"+this.containers[z][x][y].position.y)
     }
   },
   hideContainer : function(z,x,y) {
     if(this.existsContainer(z,x,y))
-      //this.containers[z][x][y].worldVisibile = false
+      //this.containers[z][x][y].visibile = false
       this.app.stage.removeChild(this.containers[z][x][y])
   },
   existsContainer : function(z,x,y) {
@@ -61,15 +62,15 @@ MapControls.prototype = {
   },
   sortStage : function() {
     this.app.stage.children.sort(function(a,b) {
-      a.zOrder = a.zOrder || 0
-      b.zOrder = b.zOrder || 0
+      //a.zOrder = a.zOrder || 0
+      //b.zOrder = b.zOrder || 0
       return a.zOrder - b.zOrder
     })
   },
   createContainer : function(z,x,y) {
     if(!this.containers[z]) this.containers[z] = []
     if(!this.containers[z][x]) this.containers[z][x] = []
-    this.containers[z][x][y] = new PIXI.DisplayObjectContainer()
+    this.containers[z][x][y] = new PIXI.DisplayObjectContainer() //DisplayObjectContainer
     var c = this.containers[z][x][y]
     var t = new PIXI.Sprite(this.tileLoader.getTexture(z,x,y))
     t.width = this.tileLoader.TILE_RESOLUTION
@@ -83,50 +84,47 @@ MapControls.prototype = {
   render : function() {
     if(!this.allowRender) return false //nothing loaded yet
 
+    this.app.stage.removeChildren() //clearing the stage
+
     var z0 = this.zoomHandler.getZoom()
-    
+
+    var n = 0
+
     for(var z = this.zoomHandler.MIN_ZOOM;z<=z0;z++) { //update every tile's corrdinates
       var c = this.zoomHandler.getTileCount(z)
       var center = Math.pow(2,z-12)//c / 2
       var k = this.zoomHandler.getZoomRatio(z0,z)
       var resolution = k * this.tileLoader.TILE_RESOLUTION
       
-      var cx = this.app.view.width  / 2 + this.offset.x - ( center ) * resolution
-      var cy = this.app.view.height / 2 + this.offset.y - ( center ) * resolution
-      //console.log(cx,cy,this.app.view.width / 2,this.app.view.height / 2)
+      var cx = this.app.view.width  / 2 - center * resolution + this.offset.x
+      var cy = this.app.view.height / 2 - center * resolution + this.offset.y
 
-      for(var x = 0;x<c;x++) {
-        for(var y = 0;y<c;y++) {
-          if(this.existsContainer(z,x,y) && this.zoomHandler.checkBoundaries(this,z0,z,x,y)) {
-            var cont = this.getContainer(z,x,y)
-            
-            cont.width  = resolution
-            cont.height = resolution
+      this.zoomHandler.checkBoundaries(this,z0,z,0,0,true)
 
-            cont.position = new PIXI.Point(
-              cx + x * resolution,
-              cy + y * resolution
-            )
-          }
-        }
-      }
-    }
-
-    for(var z = this.zoomHandler.MAX_ZOOM;z>=this.zoomHandler.MIN_ZOOM;z--) {
-      var c = this.zoomHandler.getTileCount(z)
       for(var x = 0;x<c;x++) {
         for(var y = 0;y<c;y++) {
           if(this.zoomHandler.checkBoundaries(this,z0,z,x,y)) {
-            if(this.existsContainer(z,x,y))
+            if(this.existsContainer(z,x,y)) {
+              var cont = this.getContainer(z,x,y)
+            
+              cont.width  = resolution
+              cont.height = resolution
+
+              cont.position = new PIXI.Point(
+                cx + x * resolution,
+                cy + y * resolution
+              )
               this.showContainer(z,x,y)
+              n++
+            }
             else
-            this.tileLoader.add(z,x,y)
+              this.tileLoader.add(z,x,y)
           }
-          else
-            this.hideContainer(z,x,y)
         }
       }
     }
+
+    //console.log(n+" tiles drawn")
 
     this.tileLoader.load()
 

@@ -46,7 +46,7 @@ KeyBinder.prototype = {
     this.map.app.view.addEventListener("mousewheel", applyWrapper(this.wheelZoomHandler,this), true)
 
     this.map.app.view.addEventListener("mousedown", applyWrapper(this.mouseDownDragHandler,this), true)
-    this.map.app.view.addEventListener("mouseup"  , applyWrapper(this.mouseUpDragHandler,this),   true)
+    window.addEventListener("mouseup"  , applyWrapper(this.mouseUpDragHandler,this),   true)
     this.map.app.view.addEventListener("mousemove", applyWrapper(this.mouseMoveDragHandler,this), true)
   }
 }
