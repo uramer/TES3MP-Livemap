@@ -42,15 +42,15 @@ MapControls.prototype = {
   },
   showContainer : function(z,x,y) {
     if(this.existsContainer(z,x,y)) {
-      this.containers[z][x][y].visibile = true
-      //this.app.stage.addChild(this.containers[z][x][y])
+      //this.containers[z][x][y].worldVisibile = true
+      this.app.stage.addChild(this.containers[z][x][y])
       //console.log(this.containers[z][x][y].position.x+":"+this.containers[z][x][y].position.y)
     }
   },
   hideContainer : function(z,x,y) {
     if(this.existsContainer(z,x,y))
-      this.containers[z][x][y].visibile = false
-      //this.app.stage.removeChild(this.containers[z][x][y])
+      //this.containers[z][x][y].worldVisibile = false
+      this.app.stage.removeChild(this.containers[z][x][y])
   },
   existsContainer : function(z,x,y) {
     if(this.containers[z])
@@ -77,15 +77,15 @@ MapControls.prototype = {
     t.position = new PIXI.Point(0)
     c.addChild(t)
     c.zOrder = z
-    this.app.stage.addChild(c)
-    this.sortStage()
+    //this.app.stage.addChild(c)
+    
   },
   render : function() {
     if(!this.allowRender) return false //nothing loaded yet
 
     var z0 = this.zoomHandler.getZoom()
     
-    for(var z = this.zoomHandler.MAX_ZOOM;z>=this.zoomHandler.MIN_ZOOM;z--) {
+    for(var z = this.zoomHandler.MIN_ZOOM;z<=z0;z++) { //update every tile's corrdinates
       var c = this.zoomHandler.getTileCount(z)
       var center = Math.pow(2,z-12)//c / 2
       var k = this.zoomHandler.getZoomRatio(z0,z)
@@ -97,7 +97,7 @@ MapControls.prototype = {
 
       for(var x = 0;x<c;x++) {
         for(var y = 0;y<c;y++) {
-          if(this.existsContainer(z,x,y)) {1
+          if(this.existsContainer(z,x,y) && this.zoomHandler.checkBoundaries(this,z0,z,x,y)) {
             var cont = this.getContainer(z,x,y)
             
             cont.width  = resolution
@@ -116,21 +116,14 @@ MapControls.prototype = {
       var c = this.zoomHandler.getTileCount(z)
       for(var x = 0;x<c;x++) {
         for(var y = 0;y<c;y++) {
-          if(z>z0) {
-            this.hideContainer(z,x,y)
-            continue
-          }
-          if(this.existsContainer(z,x,y)) { 
-            if(this.zoomHandler.checkBoundaries(this,z0,z,x,y))
+          if(this.zoomHandler.checkBoundaries(this,z0,z,x,y)) {
+            if(this.existsContainer(z,x,y))
               this.showContainer(z,x,y)
             else
-              this.hideContainer(z,x,y)
+            this.tileLoader.add(z,x,y)
           }
-          else {
-            if(this.zoomHandler.checkBoundaries(this,z0,z,x,y)) {
-              this.tileLoader.add(z,x,y)
-            }
-          }
+          else
+            this.hideContainer(z,x,y)
         }
       }
     }
