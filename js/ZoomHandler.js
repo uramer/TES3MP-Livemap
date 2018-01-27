@@ -12,7 +12,7 @@ var ZoomHandler = function(map) {
   }
   this.MIN_ZOOM = 11
   this.MAX_ZOOM = 18
-  this.ZOOM_STEP = 0.5
+  this.ZOOM_STEP = 0.25
   this.currentZoom = 12
 }
 
@@ -55,15 +55,14 @@ ZoomHandler.prototype = {
     return (x0<=x && x<=x1 && y0<=y && y<=y1)
   },
   updateOffset : function (e,z) {
-    var k = 1
-    if (z > this.getZoom()) k = -1
-    if(z == this.getZoom()) k = 0
+    if(z == this.getZoom()) return
 
-    this.map.offset.x = this.map.offset.x - k * ( e.clientX - this.map.app.view.width / 2 )
-    this.map.offset.y = this.map.offset.y - k * ( e.clientY - this.map.app.view.height / 2 )
+    var dx = ( e.clientX - this.map.app.view.width  / 2 )
+    var dy = ( e.clientY - this.map.app.view.height / 2 )
+    var k = this.map.zoomHandler.getZoomRatio(this.map.zoomHandler.getZoom(),z)
 
-    this.map.offset.x *= this.map.zoomHandler.getZoomRatio(this.map.zoomHandler.getZoom(),z) 
-    this.map.offset.y *= this.map.zoomHandler.getZoomRatio(this.map.zoomHandler.getZoom(),z) 
+    this.map.offset.x = (this.map.offset.x - dx) * k + dx
+    this.map.offset.y = (this.map.offset.y - dy) * k + dy
   },
   decrease : function(e) {
     var z = this.getZoom()
