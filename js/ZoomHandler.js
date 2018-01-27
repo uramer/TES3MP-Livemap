@@ -13,7 +13,7 @@ var ZoomHandler = function(map) {
   this.MIN_ZOOM = 11
   this.MAX_ZOOM = 18
   this.ZOOM_STEP = 0.5
-  this.currentZoom = 13
+  this.currentZoom = 12
 }
 
 ZoomHandler.prototype = {
@@ -25,14 +25,14 @@ ZoomHandler.prototype = {
     return this.ZOOM_TABLE[z]
   },
   getZoomRatio : function(z0,z) {
-    return Math.pow(2,z0 - z)//this.getTileCount(z0)/this.getTileCount(z)// 
+    return Math.pow(2,z0 - z)
   },
-  checkBoundaries : function (map,z0,z,x,y,log) {
-    if(Math.abs(z-z0)>=1) return false
+  checkBoundaries : function (map,z0,z,x,y) {
+    if(z>z0) return false
 
-    var center = this.getTileCount(z) / 2
+    var center = Math.pow(2,z-map.zoomHandler.MIN_ZOOM-1)//this.getTileCount(z) / 2
     var k = this.getZoomRatio(z0,z)
-    var resolution = map.tileLoader.TILE_RESOLUTION
+    var resolution = k * map.tileLoader.TILE_RESOLUTION
 
     var x0 = center - ( map.offset.x + map.app.view.width  / 2) / resolution
     var y0 = center - ( map.offset.y + map.app.view.height / 2) / resolution
@@ -50,11 +50,6 @@ ZoomHandler.prototype = {
 
     function convertY(y) {
       return map.app.view.height / 2 + (y - center) * resolution + map.offset.y
-    }
-
-    if(log) {
-      console.log(z0,z,"(",x0,",",y0,")-(",x1,",",y1,"); (",map.app.view.width,",",map.app.view.height,"); (",convertX(x0),",",convertY(y0),")-(",convertX(x1),",",convertY(y1),")")
-      //console.log(this.map.app.view.width  / 2 + this.offset.x - ( center ) * res)
     }
 
     return (x0<=x && x<=x1 && y0<=y && y<=y1)

@@ -66,7 +66,6 @@ TileLoader.prototype = {
     }
   },
   addBulk : function(r) {
-    console.log(this.busy)
     r.forEach(applyWrapper(function(v) {
       this.addDirectly(v[0],v[1],v[2])
     },this))

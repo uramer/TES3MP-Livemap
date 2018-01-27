@@ -42,15 +42,11 @@ MapControls.prototype = {
       return false
   },
   showContainer : function(z,x,y) {
-    if(this.existsContainer(z,x,y)) {
-      //this.containers[z][x][y].visibile = true
+    if(this.existsContainer(z,x,y))
       this.app.stage.addChild(this.containers[z][x][y])
-      //console.log(this.containers[z][x][y].position.x+":"+this.containers[z][x][y].position.y)
-    }
   },
   hideContainer : function(z,x,y) {
     if(this.existsContainer(z,x,y))
-      //this.containers[z][x][y].visibile = false
       this.app.stage.removeChild(this.containers[z][x][y])
   },
   existsContainer : function(z,x,y) {
@@ -92,14 +88,12 @@ MapControls.prototype = {
 
     for(var z = this.zoomHandler.MIN_ZOOM;z<=z0;z++) { //update every tile's corrdinates
       var c = this.zoomHandler.getTileCount(z)
-      var center = Math.pow(2,z-12)//c / 2
+      var center = Math.pow(2,z-this.zoomHandler.MIN_ZOOM-1) //c / 2
       var k = this.zoomHandler.getZoomRatio(z0,z)
       var resolution = k * this.tileLoader.TILE_RESOLUTION
       
-      var cx = this.app.view.width  / 2 - center * resolution + this.offset.x
-      var cy = this.app.view.height / 2 - center * resolution + this.offset.y
-
-      this.zoomHandler.checkBoundaries(this,z0,z,0,0,true)
+      var cx = this.app.view.width  / 2 - ( center ) * resolution + this.offset.x
+      var cy = this.app.view.height / 2 - ( center ) * resolution + this.offset.y
 
       for(var x = 0;x<c;x++) {
         for(var y = 0;y<c;y++) {
@@ -123,8 +117,6 @@ MapControls.prototype = {
         }
       }
     }
-
-    //console.log(n+" tiles drawn")
 
     this.tileLoader.load()
 

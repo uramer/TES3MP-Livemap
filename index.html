@@ -12,7 +12,6 @@
     <script src="js/MapControls.js"></script>
     <script>
       window.onload=function () {
-        window.map = map
         var map = new MapControls()
         map.init()
         window.onresize = applyWrapper(map.windowResize,map)
