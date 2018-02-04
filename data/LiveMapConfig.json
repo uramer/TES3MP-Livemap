@@ -42,12 +42,22 @@
     }
   },
 
-  "ALIAS_PREFIX" : "tile",
-  "ALIAS_SEPARATOR" : "_",
+  "TILE_ALIAS_PREFIX" : "tile",
+  "TILE_ALIAS_SEPARATOR" : "_",
   
   "ZOOM_MIN" : 11,
   "ZOOM_MAX" : 18,
   "ZOOM_STEP" : 0.25,
   "ZOOM_PRELOAD" : 11,
-  "ZOOM_START" : 12
+  "ZOOM_START" : 12,
+
+  "MARKER_PLAYER_PATH" : "img/compass.png",
+  "MARKER_PLAYER_DATA" : "data/LiveMap.json",
+  "MARKER_PLAYER_DATA_ZOOM" : 18,
+  "MARKER_PLAYER_DATA_CENTER" : {
+    "x" : 0,
+    "y" : 0
+  },
+  "MARKER_PLAYER_ZORDER" : 100,
+  "MARKER_PLAYER_ALIAS" : "marker_player"
 }

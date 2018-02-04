@@ -19,7 +19,7 @@ SceneHandler.prototype = {
     stage.removeChildren()
     
     this.containerSuppliers.forEach(function(v) {
-      v.getContainers(bounds,stage,offset,zoom).forEach(function(c) {
+      v.getContainers(bounds,offset,zoom).forEach(function(c) {
         stage.addChild(c)
       })
     })

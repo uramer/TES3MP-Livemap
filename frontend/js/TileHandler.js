@@ -37,8 +37,8 @@ TileHandler.prototype = {
     this.createContainer(s[1],s[2],s[3])
   },
   tilename : function(z,x,y) {
-    var prefix = this.config.get("ALIAS_PREFIX")
-    var sep = this.config.get("ALIAS_SEPARATOR")
+    var prefix = this.config.get("TILE_ALIAS_PREFIX")
+    var sep = this.config.get("TILE_ALIAS_SEPARATOR")
     return prefix+sep+z+sep+x+sep+y
   },
   filename : function(z,x,y) {
@@ -62,7 +62,6 @@ TileHandler.prototype = {
     return false
   },
   createContainer : function(z,x,y) {
-    console.log("Created: ",z,x,y)
     if(!this.containers[z]) this.containers[z] = []
     if(!this.containers[z][x]) this.containers[z][x] = []
     this.containers[z][x][y] = new PIXI.DisplayObjectContainer()
@@ -74,7 +73,7 @@ TileHandler.prototype = {
     c.addChild(t)
     c.zOrder = z
   },
-  getContainers : function(bounds,stage,offset,z0) {
+  getContainers : function(bounds,offset,z0) {
     var result = []
     var center = 0.25 //central tile for minZoom-1
     var k = Math.pow(2,z0-this.minZoom+1) //scale ratio for minZoom -1
@@ -105,7 +104,6 @@ TileHandler.prototype = {
       for(var x = 0;x<count.x;x++) {
         for(var y = 0;y<count.y;y++) {
           if((x0<=x && x<=x1 && y0<=y && y<=y1)) {//checking boundaries
-            //console.log("passed boundaries: ",z,x,y)
             if(this.existsContainer(z,x,y)) {//tile already loaded and on the screen, drawing
               var cont = this.getContainer(z,x,y)
 
