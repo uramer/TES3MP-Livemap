@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <link href="css/main.css" rel="stylesheet" /> 
+    <script src="lib/pixi.min.js"></script>
+    <script src="js/applyWrapper.js"></script>
+    <script src="js/AjaxRequest.js"></script>
+    <script src="js/ConfigHandler.js"></script>
+    <script src="js/ZoomHandler.js"></script>
+    <script src="js/SceneHandler.js"></script>
+    <script src="js/QueuedLoader.js"></script>
+    <script src="js/TileHandler.js"></script>
+    <script src="js/KeyBinder.js"></script>
+    <script src="js/MarkerHandler.js"></script>
+    <script src="js/MapControls.js"></script>
+    <script>
+      window.onload=function () {
+        var map = new MapControls()
+        map.init()
+        window.onresize = applyWrapper(map.windowResize,map)
+      }
+    </script>
+  </head>
+  <body>
+  </body>
+</html>

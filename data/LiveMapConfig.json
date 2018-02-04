@@ -1,0 +1,53 @@
+{
+  "TILE_RESOLUTION" : { 
+    "x" : 256,
+    "y" : 256
+  },
+  "TILE_PATH" : "/tiles/webp/",
+  "TILE_EXTENSION" : ".webp",
+  "TILE_PREFIX" : "map",
+  "TILE_SEPARATOR" : "_",
+  "TILE_ZOOM_COUNT" : {
+    "11": {
+      "x":1,
+      "y":1
+    },
+    "12": {
+      "x":2,
+      "y":2
+    },
+    "13": {
+      "x":4,
+      "y":4
+    },
+    "14": {
+      "x":7,
+      "y":7
+    },
+    "15": {
+      "x":13,
+      "y":13
+    },
+    "16": {
+      "x":25,
+      "y":25
+    },
+    "17": {
+      "x":50,
+      "y":50
+    },
+    "18": {
+      "x":100,
+      "y":100
+    }
+  },
+
+  "ALIAS_PREFIX" : "tile",
+  "ALIAS_SEPARATOR" : "_",
+  
+  "ZOOM_MIN" : 11,
+  "ZOOM_MAX" : 18,
+  "ZOOM_STEP" : 0.25,
+  "ZOOM_PRELOAD" : 11,
+  "ZOOM_START" : 12
+}
