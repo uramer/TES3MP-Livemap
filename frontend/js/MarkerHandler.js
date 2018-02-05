@@ -50,19 +50,21 @@ MarkerHandler.prototype = {
     var result = []
     var z = this.config.get("MARKER_PLAYER_DATA_ZOOM")
     var k = Math.pow(2,z0-z)
+    var NW = this.config.get("MARKER_PLAYER_DATA_NW")
+    var SE = this.config.get("MARKER_PLAYER_DATA_SE")
+    var size = this.config.get("MARKER_PLAYER_DATA_SIZE")
     
     for(var x in this.data) {
       var cont = this.getContainer(x)
 
-      var center = this.config.get("MARKER_PLAYER_DATA_CENTER")
 
       cont.position = new PIXI.Point(
-        ( this.data[x].x - center.x ) * k + offset.x,
-        ( this.data[x].y - center.y ) * k + offset.y
+        ( ( this.data[x].x - NW.x ) / ( SE.x - NW.x ) ) * k * size.x + offset.x,
+        ( ( this.data[x].y - NW.y ) / ( SE.y - NW.y ) ) * k * size.y + offset.y
       )
       cont.rotation = this.data[x].rot 
 
-      console.log(cont.position.x,cont.position.y)
+      if(x==1) console.log(k,cont.position.x,cont.position.y)
 
       result.push(cont)
     }

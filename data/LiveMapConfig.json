@@ -54,9 +54,17 @@
   "MARKER_PLAYER_PATH" : "img/compass.png",
   "MARKER_PLAYER_DATA" : "data/LiveMap.json",
   "MARKER_PLAYER_DATA_ZOOM" : 18,
-  "MARKER_PLAYER_DATA_CENTER" : {
-    "x" : 0,
-    "y" : 0
+  "MARKER_PLAYER_DATA_NW" : {
+    "x" : -253921,
+    "y" : 221157
+  },
+  "MARKER_PLAYER_DATA_SE" : {
+    "x" : 188931,
+    "y" : -155629
+  },
+  "MARKER_PLAYER_DATA_SIZE" : {
+    "x" : 25600,
+    "y" : 25600
   },
   "MARKER_PLAYER_ZORDER" : 100,
   "MARKER_PLAYER_ALIAS" : "marker_player"
